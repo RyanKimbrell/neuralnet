@@ -10,13 +10,13 @@ def main():
     TESTING
     """
 
-    w1 = np.random.randn()
-    w2 = np.random.randn()
-    b = np.random.randn()
 
     data, mystery_data = get_data()
 
-    scatter_plot(data)
+    learning_rate = 0.2
+    iterations = 50000
+
+    training_loop(data, learning_rate, iterations)
 
 #============================================
 
@@ -43,11 +43,17 @@ def neural_network(input1, input2, weight1, weight2, bias):
     return sigmoid((input1 * weight1) + (input2 * weight2) + bias)
 
 
-def training_loop(data, w1, w2, b):
-    for i in range(100):
+def training_loop(data, learning_rate, iterations):
+
+    w1 = np.random.randn()
+    w2 = np.random.randn()
+    b = np.random.randn()
+
+    costs = []
+
+    for i in range(iterations):
         ri = np.random.randint(len(data))
         point = data[ri]
-        print(point)
 
         z = (point[0] * w1) + (point[1] * w2) + b
     
@@ -55,6 +61,8 @@ def training_loop(data, w1, w2, b):
 
         target = point[2]
         cost = squared_error(prediction, target)
+
+        costs.append(cost)
 
         d_cost_pred = d_squared_error(prediction, target)
         dpred_dz = sigmoid_prime(z)
@@ -67,6 +75,14 @@ def training_loop(data, w1, w2, b):
 
         dcost_dw1 =  dcost_dz * dz_dw1
         dcost_dw2 = dcost_dz * dz_dw2 
+        dcost_db = dcost_dz * dz_db
+
+        w1 = w1 - learning_rate * dcost_dw1
+        w2 = w2 - learning_rate * dcost_dw2
+        b = b - learning_rate * dcost_db
+
+    plt.plot(costs)
+    plt.show()
 
 
 #===================
